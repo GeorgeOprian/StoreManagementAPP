@@ -57,11 +57,6 @@ public class Product {
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal price;
 
-    @DecimalMin(value = "0.000")
-    @Digits(integer = 7, fraction = 3)
-    @Column(precision = 10, scale = 3)
-    private BigDecimal weightKg;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 32)
     private ProductStatus status = ProductStatus.ACTIVE;
