@@ -1,5 +1,6 @@
 package com.georgeoprian.storemanagementapp.controller;
 
+import com.georgeoprian.storemanagementapp.dtos.PriceUpdateDto;
 import com.georgeoprian.storemanagementapp.dtos.ProductDto;
 import com.georgeoprian.storemanagementapp.service.ProductService;
 import jakarta.validation.Valid;
@@ -54,5 +55,12 @@ public class ProductController {
         return service.deleteProduct(id)
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
+    }
+
+    @PatchMapping("/{id}/price")
+    public ResponseEntity<ProductDto> updatePrice(@PathVariable UUID id,
+            @Valid @RequestBody PriceUpdateDto dto) {
+        var updated = service.updatePrice(id, dto.getPrice());
+        return ResponseEntity.ok(updated);
     }
 }

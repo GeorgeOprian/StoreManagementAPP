@@ -10,14 +10,12 @@ import com.georgeoprian.storemanagementapp.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public ProductDto getProductById(UUID id) {
-        Product product = repository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
+        Product product = findProductById(id);
         return mapper.toDto(product);
     }
 
@@ -62,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
         try {
             checkIfBarcodeExists(dto);
 
-            Product product = repository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
+            Product product = findProductById(id);
             mapper.updateEntityFromDto(dto, product);
 
             log.info("Updating product id={} with dto id={}", product.getId(), dto.getId());
@@ -79,6 +77,18 @@ public class ProductServiceImpl implements ProductService {
             return false;
         repository.deleteById(id);
         return true;
+    }
+
+    @Override
+    public ProductDto updatePrice(UUID id, BigDecimal newPrice) {
+        Product product = findProductById(id);
+
+        product.setPrice(newPrice);
+        return mapper.toDto(repository.save(product));
+    }
+
+    private Product findProductById(UUID id) {
+        return repository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
     }
 }
 
