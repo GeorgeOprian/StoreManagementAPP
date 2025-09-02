@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -40,35 +41,34 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public ProductDto getProductByBarcode(String barcode) {
-        Product product = repository.findByBarcode(barcode).orElseThrow(() -> new NotFoundException("Product not found by barcode"));
+        Product product = repository.findByBarcode(barcode).orElseThrow(() -> new NotFoundException("Product not found by barcode", 4042));
         return mapper.toDto(product);
     }
 
     public ProductDto createProduct(ProductDto dto) {
-        checkIfBarcodeExists(dto);
+        Optional<Product> productOptional = repository.findByBarcode(dto.getBarcode());
+        if (productOptional.isPresent()) {
+            throw new BadRequestException("Another product with the same barcode already exists", 4001);
+        }
         var entity = mapper.toEntity(dto);
         return mapper.toDto(repository.save(entity));
     }
 
-    private void checkIfBarcodeExists(ProductDto dto) {
-        if (repository.existsByBarcode(dto.getBarcode())) {
-            throw new NotFoundException("Product with barcode already exists");
-        }
-    }
+
 
     public ProductDto updateProduct(UUID id, ProductDto dto) {
-        try {
-            checkIfBarcodeExists(dto);
 
-            Product product = findProductById(id);
-            mapper.updateEntityFromDto(dto, product);
+        Product product = findProductById(id);
 
-            log.info("Updating product id={} with dto id={}", product.getId(), dto.getId());
-
-            return mapper.toDto(repository.save(product));
-        } catch (BadRequestException e) {
-            throw new BadRequestException(e.getMessage());
+        if (!dto.getBarcode().equals(product.getBarcode()) && repository.findByBarcode(dto.getBarcode()).isPresent()) {
+            throw new BadRequestException("Another product with the same barcode already exists", 4001);
         }
+
+        mapper.updateEntityFromDto(dto, product);
+
+        log.info("Updating product id={} with dto id={}", product.getId(), dto.getId());
+
+        return mapper.toDto(repository.save(product));
 
     }
 
@@ -88,7 +88,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private Product findProductById(UUID id) {
-        return repository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
+        return repository.findById(id).orElseThrow(() -> new NotFoundException("Product not found", 4041));
     }
 }
 

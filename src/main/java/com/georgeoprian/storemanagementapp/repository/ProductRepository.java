@@ -11,6 +11,4 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpec
 
     Optional<Product> findByBarcode(String barcode);
 
-    boolean existsByBarcode(String barcode);
-
 }
