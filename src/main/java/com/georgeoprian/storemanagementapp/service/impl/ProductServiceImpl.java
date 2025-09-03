@@ -54,8 +54,6 @@ public class ProductServiceImpl implements ProductService {
         return mapper.toDto(repository.save(entity));
     }
 
-
-
     public ProductDto updateProduct(UUID id, ProductDto dto) {
 
         Product product = findProductById(id);

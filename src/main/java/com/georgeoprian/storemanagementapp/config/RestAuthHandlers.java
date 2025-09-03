@@ -21,7 +21,7 @@ public class RestAuthHandlers implements AuthenticationEntryPoint, AccessDeniedH
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
             org.springframework.security.core.AuthenticationException authException)
-            throws IOException {
+            throws IOException { //401 Unauthorized
         Map<String, Object> body = Map.of(
                 "timestamp", LocalDateTime.now().toString(),
                 "status", 401,
@@ -35,7 +35,7 @@ public class RestAuthHandlers implements AuthenticationEntryPoint, AccessDeniedH
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
-            AccessDeniedException accessDeniedException) throws IOException {
+            AccessDeniedException accessDeniedException) throws IOException { //403 Forbidden
         Map<String, Object> body = Map.of(
                 "timestamp", LocalDateTime.now().toString(),
                 "status", 403,
