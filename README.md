@@ -13,11 +13,9 @@ It uses **Spring Security (Basic Auth)**, **MapStruct** for Dto to Entity mappin
     - Predefined users/roles inserted at startup via `CommandLineRunner`
 
 - **Products API**
-    - CRUD operations on products (`ProductController`)
-    - Validation using `jakarta.validation`
+    - CRUD operations on products
+    - Dtos validation and validation for duplicates
     - `ProductDto` to `Product` mapping using MapStruct
-    - Custom exception handling (`BadRequestException`, `NotFoundException`)
-    - Global error handler (`@ControllerAdvice`)
 
 - **Database**
     - PostgreSQL
@@ -47,20 +45,22 @@ Two users are created automatically at startup:
 
 - **Admin user**
     - Username: `admin`
-    - Password: `admin` (BCrypt encoded)
+    - Password: `admin123` (BCrypt encoded)
     - Role: `ADMIN`
 
 - **Regular user**
     - Username: `user`
-    - Password: `user` (BCrypt encoded)
+    - Password: `user123` (BCrypt encoded)
     - Role: `USER`
+
+All registered users can be listed by an ***admin*** user by executing a GET request at `/api/users`.
 
 More users can be created by an ***admin*** user by executing a POST request at `/api/users` using the following request:
 #### Example Request
 ```json
 {
-  "username": "george_1",
-  "password": "george123",
+  "username": "user_1",
+  "password": "user123",
   "roles": ["ROLE_USER"]
 }
 ```
