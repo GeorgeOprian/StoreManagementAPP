@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -20,5 +21,10 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserDto> create(@RequestBody CreateUserRequest req) {
         return ResponseEntity.ok(userService.createUser(req.username(), req.password(), req.roles()));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserDto>> getAll() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 }

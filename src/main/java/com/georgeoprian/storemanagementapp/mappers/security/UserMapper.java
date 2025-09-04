@@ -16,9 +16,6 @@ public interface UserMapper {
     @Mapping(target = "roles", expression = "java(mapRoles(entity.getRoles()))")
     UserDto toDto(UserEntity entity);
 
-    @Mapping(target = "roles", ignore = true)
-    UserEntity toEntity(UserDto dto);
-
     default Set<String> mapRoles(Set<RoleEntity> roles) {
         return roles.stream().map(RoleEntity::getName).collect(Collectors.toSet());
     }

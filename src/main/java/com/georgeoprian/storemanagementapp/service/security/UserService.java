@@ -12,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,5 +46,11 @@ public class UserService {
                 .build();
 
         return mapper.toDto(userRepository.save(user));
+    }
+
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
     }
 }
