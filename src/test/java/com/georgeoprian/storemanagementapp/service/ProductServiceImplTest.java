@@ -9,6 +9,10 @@ import com.georgeoprian.storemanagementapp.repository.ProductRepository;
 import com.georgeoprian.storemanagementapp.service.impl.ProductServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -54,15 +58,25 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void getAllProducts_returnsMappedDtos() {
-        when(repository.findAll()).thenReturn(List.of(product));
+    void getAllProducts_returnsPagedDtos() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Product> productPage = new PageImpl<>(List.of(product), pageable, 1);
+
+        when(repository.findAll(pageable)).thenReturn(productPage);
         when(mapper.toDto(product)).thenReturn(productDto);
 
-        var result = service.getAllProducts();
+        var result = service.getAllProducts(pageable);
 
-        assertThat(result).containsExactly(productDto);
-        verify(repository).findAll();
+        assertThat(result.content()).containsExactly(productDto);
+        assertThat(result.page()).isEqualTo(0);
+        assertThat(result.size()).isEqualTo(10);
+        assertThat(result.totalElements()).isEqualTo(1);
+        assertThat(result.totalPages()).isEqualTo(1);
+        assertThat(result.last()).isTrue();
+
+        verify(repository).findAll(pageable);
     }
+
 
     @Test
     void getProductById_found_returnsDto() {

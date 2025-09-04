@@ -1,14 +1,15 @@
 package com.georgeoprian.storemanagementapp.controller;
 
+import com.georgeoprian.storemanagementapp.dtos.PageResponseDto;
 import com.georgeoprian.storemanagementapp.dtos.PriceUpdateDto;
 import com.georgeoprian.storemanagementapp.dtos.ProductDto;
 import com.georgeoprian.storemanagementapp.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -19,8 +20,8 @@ public class ProductController {
     private final ProductService service;
 
     @GetMapping
-    public List<ProductDto> getAll() {
-        return service.getAllProducts();
+    public ResponseEntity<PageResponseDto<ProductDto>> getAll(Pageable pageable) {
+        return ResponseEntity.ok(service.getAllProducts(pageable));
     }
 
     @GetMapping("/{id}")

@@ -1,14 +1,15 @@
 package com.georgeoprian.storemanagementapp.service;
 
+import com.georgeoprian.storemanagementapp.dtos.PageResponseDto;
 import com.georgeoprian.storemanagementapp.dtos.ProductDto;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 public interface ProductService {
 
-    List<ProductDto> getAllProducts();
+    PageResponseDto<ProductDto> getAllProducts(Pageable pageable);
     ProductDto getProductById(UUID id);
     ProductDto getProductByBarcode(String barcode);
     ProductDto createProduct(ProductDto dto);

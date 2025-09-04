@@ -1,5 +1,6 @@
 package com.georgeoprian.storemanagementapp.service.impl;
 
+import com.georgeoprian.storemanagementapp.dtos.PageResponseDto;
 import com.georgeoprian.storemanagementapp.dtos.ProductDto;
 import com.georgeoprian.storemanagementapp.exception.BadRequestException;
 import com.georgeoprian.storemanagementapp.exception.NotFoundException;
@@ -10,14 +11,14 @@ import com.georgeoprian.storemanagementapp.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,11 +30,20 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository repository;
     private final ProductMapper mapper;
 
-    public List<ProductDto> getAllProducts() {
-        return repository.findAll().stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList());
+    public PageResponseDto<ProductDto> getAllProducts(Pageable pageable) {
+        Page<Product> page = repository.findAll(pageable);
+
+        return new PageResponseDto<>(
+                page.map(mapper::toDto).getContent(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast()
+        );
     }
+
+
 
     public ProductDto getProductById(UUID id) {
         Product product = findProductById(id);
